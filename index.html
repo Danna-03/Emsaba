@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortes de Agua - EMSABA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            background-color: #004080;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        #map {
+            height: 500px;
+            margin: 20px;
+            border: 2px solid #004080;
+        }
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #004080;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Cortes de Agua Programados - EMSABA</h1>
+    </header>
+    
+    <div class="container">
+        <h2>Consulta tu ciudad</h2>
+        <input type="text" id="cityInput" placeholder="Ingresa tu ciudad...">
+        <button onclick="buscarCorte()">Buscar Corte</button>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+        // Inicializar el mapa
+        var map = L.map('map').setView([-1.831239, -78.183406], 7); // Coordenadas de Ecuador
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Datos de ejemplo para cortes de agua
+        var cortes = [
+            { ciudad: "Montalvo", lat: -1.7901, lng: -79.3127, motivo: "Mantenimiento", fecha: "10/01/2025", duracion: "4 horas" },
+            { ciudad: "Babahoyo", lat: -1.8011, lng: -79.5347, motivo: "Limpieza", fecha: "12/01/2025", duracion: "6 horas" },
+            { ciudad: "Quevedo", lat: -1.0135, lng: -79.4644, motivo: "Mantenimiento", fecha: "15/01/2025", duracion: "3 horas" }
+        ];
+
+        // Función para buscar y mostrar cortes de agua
+        function buscarCorte() {
+            var cityInput = document.getElementById('cityInput').value.trim().toLowerCase();
+            var resultado = cortes.find(corte => corte.ciudad.toLowerCase() === cityInput);
+            
+            if (resultado) {
+                alert(`Ciudad: ${resultado.ciudad}\nMotivo: ${resultado.motivo}\nFecha: ${resultado.fecha}\nDuración: ${resultado.duracion}`);
+                map.setView([resultado.lat, resultado.lng], 13);
+                L.marker([resultado.lat, resultado.lng]).addTo(map)
+                    .bindPopup(`<b>${resultado.ciudad}</b><br>Motivo: ${resultado.motivo}<br>Fecha: ${resultado.fecha}<br>Duración: ${resultado.duracion}`)
+                    .openPopup();
+            } else {
+                alert("No se encontraron cortes programados para esta ciudad.");
+            }
+        }
+    </script>
+</body>
+</html>
